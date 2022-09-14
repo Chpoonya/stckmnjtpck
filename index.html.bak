@@ -143,6 +143,11 @@
           }
         })
       }
+	  
+	  function PostOnWall(message, attachment){
+		vkBridge.send("VKWebAppShowWallPostBox", { "message": message, "attachments": attachment });
+	  }
+	  
 </script>
   </body>
 </html>
