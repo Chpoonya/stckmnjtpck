@@ -103,51 +103,45 @@
     </script>
   
   <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
-    <script>
-      var player;
-      var sdk;
-      var payments = null;
+
+    <script type="text/javascript">
 
       vkBridge.send('VKWebAppInit');
 
-      var lb;
+      function auth(){
+        vkBridge.send('VKWebAppGetUserInfo').then(_info =>{
+          console.log(_info);
+          unityI.SendMessage('VKSDK', 'AuthenticateSuccess', JSON.stringify(_info));
+        });
+      }
 
-  function getUserData(){
-            vkBridge.send("VKWebAppGetLaunchParams").then(data =>{
+      function getUserData(){
+        vkBridge.send("VKWebAppGetLaunchParams").then(data =>{
         console.log(data);
         unityI.SendMessage('VKSDK', 'DataGetting', JSON.stringify(data));
       });
+	  }
+
+      function setUserData(data){
+        console.log(data);
+        vkBridge.send('VKWebAppStorageSet',{"key": "_save" , "value": data}).then(_info =>{
+          console.log("Saved!")});
       }
 
       function showFullscrenAd(){
-        vkBridge.send('VKWebAppShowNativeAds',{ad_format:"interstitial"}).then({
-          callbacks: {
-            onClose: function(wasShown) {},
-            onError: function(error) {}
-          }
-        })
+        vkBridge.send('VKWebAppShowNativeAds',{ad_format:"interstitial"}).then(data => {
+          console.log(data);});
       }
 
-     function showRewardedAd(id){
-        vkBridge.send('VKWebAppShowNativeAds',{ad_format:"reward"}).then({
-        callbacks: {
-            onOpen: () => {},
-            onRewarded: () => {
-                unityI.SendMessage('VKSDK', 'RewardGetting');
-                console.log('Rewarded! Id: ' + id);},
-            onClose: () => {},
-            onError: (e) => {
-                var data = {"id" : id, "error" : error};
-                console.log('Error while open video ad:', e);
-            }
-          }
-        })
+      function showRewardedAd(){
+        vkBridge.send('VKWebAppShowNativeAds',{ad_format:"reward"}).then(data => {
+          console.log(data);
+          unityI.SendMessage('VKSDK', 'RewardGetting',JSON.stringify(data.result));})
       }
 	  
 	  function PostOnWall(message, attachment){
 		vkBridge.send("VKWebAppShowWallPostBox", { "message": message, "attachments": attachment });
 	  }
-	  
-</script>
+    </script>
   </body>
 </html>
